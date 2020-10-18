@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group = 'com.kieferlam'
+version = '0.0.2'
+sourceCompatibility = '1.8'
+
+repositories {
+    maven {
+        url = 'https://repo.maven.apache.org/maven2'
+    }
+}
+
+dependencies {
+    implementation 'org.openjfx:javafx-controls:13'
+}
+
+configurations {
+    extraLibs
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = group
+            artifactId = 'javafxblur'
+            version = version
+            from components.java
+        }
+    }
+}

@@ -7,7 +7,10 @@ import javafx.stage.Stage;
  * This class provides global methods to load and apply blur effects to a JavaFX stage.
  */
 public enum Blur {
-    NONE(0), BLUR_BEHIND(3), ACRYLIC(4);
+    NONE(0),
+    BLUR_BEHIND(3),
+    ACRYLIC(4);
+
     private final int accentState;
 
     Blur(int accentState) {
@@ -22,8 +25,8 @@ public enum Blur {
      * This should be called at the very start of your main function.
      * The "javafxblur" library file should be added to your library path.
      */
-    public static void loadBlurLibrary(){
-        System.loadLibrary("javafxblur");
+    public static void loadBlurLibrary() {
+        System.loadLibrary("native/Win10/x64/Release/javafxblur");
     }
 
     private static void _extApplyBlur(String target, int accentState){
@@ -34,15 +37,22 @@ public enum Blur {
      * Calls the external (native) function to apply the blur effect to a JavaFX stage.
      * The JavaFX stage must be visible before this function is called.
      * If the stage is ever hidden (destroyed, not minimised), this function must be called again once visible.
-     * @param stage
+     *
+     * <p>{@link Blur#NONE} represents no blur, {@link Blur#BLUR_BEHIND} represents a slight blur,
+     * and {@link Blur#ACRYLIC} represents a strong acrylic blur.
+     *
+     * @param stage  stage to apply blur effect to
+     * @param blur   type of blur to apply to stage
      */
     public static void applyBlur(Stage stage, Blur blur){
-        if (!stage.isShowing()) System.err.println("Warning: blur effect was called on a hidden stage!");
+        if (!stage.isShowing()) {
+            System.err.println("Warning: blur effect was called on a hidden stage!");
+        }
+
         String stageTitle = stage.getTitle();
         String targetTitle = BLUR_TARGET_PREFIX + (System.currentTimeMillis() % 1000);
         stage.setTitle(targetTitle);
         _extApplyBlur(targetTitle, blur.accentState);
         stage.setTitle(stageTitle);
     }
-
 }
