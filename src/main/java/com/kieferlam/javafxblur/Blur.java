@@ -2,6 +2,9 @@ package com.kieferlam.javafxblur;
 
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  * Singleton handler enum class Blur.
  * This class provides global methods to load and apply blur effects to a JavaFX stage.
@@ -26,7 +29,36 @@ public enum Blur {
      * The "javafxblur" library file should be added to your library path.
      */
     public static void loadBlurLibrary() {
-        System.loadLibrary("native/Win10/x64/Release/javafxblur");
+        // In a jar file; extract .dll with NativeUtils (which also calls System.load).
+        if(isJar()) {
+            try {
+                NativeUtils.loadLibraryFromJar("/resources/Win10/x64/Release/javafxblur.dll");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // We are not in a jar file, which means we can assume the .dll file can be accessed directly (development environment).
+        // Load the javafxblur.dll library directory through System.load with the directory pointing to our resources folder.
+        else {
+            try {
+                File dll = new File(Blur.class.getClassLoader().getResource("Win10/x64/Release/javafxblur.dll").toString().replace("file:/", "").replace("%20", " "));
+                System.load(dll.getAbsolutePath());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Returns whether this application is running from a jar file.
+     *
+     * <p>Used for determining whether to extract .dll files before loading them.
+     *
+     * @return  whether this application is running from a jar file
+     */
+    public static boolean isJar() {
+        return Blur.class.getResource("Blur.class").toString().startsWith("jar:");
     }
 
     private static void _extApplyBlur(String target, int accentState){
