@@ -32,7 +32,7 @@ public enum Blur {
         // In a jar file; extract .dll with NativeUtils (which also calls System.load).
         if(isJar()) {
             try {
-                NativeUtils.loadLibraryFromJar("/resources/Win10/x64/Release/javafxblur.dll");
+                NativeUtils.loadLibraryFromJar("/Win10/x64/Release/javafxblur.dll");
             } catch (IOException e) {
                 e.printStackTrace();
             }
